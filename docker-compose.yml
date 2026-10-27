@@ -1,0 +1,15 @@
+services:
+  tweetvault:
+    build: .
+    container_name: tweetvault
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      RATE_LIMIT_MAX: 40
+      RATE_LIMIT_WINDOW_MINUTES: 15
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

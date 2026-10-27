@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TweetVault - baixar vídeos do X/Twitter</title>
+  <meta name="description" content="Baixe vídeos e GIFs do X/Twitter em até 1080p.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="glow-orb orb-primary" aria-hidden="true"></div>
+  <div class="glow-orb orb-secondary" aria-hidden="true"></div>
+
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo-wrapper">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon>
+          </svg>
+        </div>
+        <span class="logo-text">Tweet<span>Vault</span></span>
+      </div>
+      <span class="badge-hd">HD 1080p</span>
+    </header>
+
+    <main class="main-content">
+      <section class="hero-section">
+        <h1 class="hero-title">Baixe vídeos do <span class="gradient-text">X / Twitter</span></h1>
+        <p class="hero-subtitle">
+          Cole o link do post com vídeo ou GIF e escolha a qualidade.
+        </p>
+
+        <form id="downloadForm" class="download-form" novalidate>
+          <div class="input-group">
+            <div class="input-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+            </div>
+            <input
+              type="url"
+              id="tweetUrlInput"
+              name="tweetUrl"
+              placeholder="Cole o link do tweet (ex: https://x.com/usuario/status/...)"
+              autocomplete="off"
+              spellcheck="false"
+              required
+            >
+            <button type="button" id="pasteBtn" class="action-btn" title="Colar link da área de transferência">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              </svg>
+              <span>Colar</span>
+            </button>
+            <button type="button" id="clearBtn" class="action-btn is-hidden" title="Limpar campo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <button type="submit" id="submitBtn" class="submit-btn">
+            <span class="btn-text">Obter Vídeo</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <div id="alertBox" class="alert-box is-hidden" role="alert">
+          <div class="alert-icon" id="alertIcon"></div>
+          <div class="alert-text" id="alertMessage"></div>
+        </div>
+      </section>
+
+      <section id="resultCard" class="result-card is-hidden">
+        <div class="card-inner">
+          <div class="tweet-author-header">
+            <div class="author-avatar-wrap">
+              <img id="authorAvatar" src="" alt="Avatar do autor" class="author-avatar">
+              <div id="authorFallbackAvatar" class="author-fallback-avatar">X</div>
+            </div>
+            <div class="author-info">
+              <div class="author-name-row">
+                <span id="authorName" class="author-name">Nome do Usuário</span>
+                <span id="authorHandle" class="author-handle">@usuario</span>
+              </div>
+              <span id="videoDuration" class="video-duration-pill">0:00</span>
+            </div>
+          </div>
+
+          <p id="tweetText" class="tweet-text"></p>
+
+          <div class="media-preview-container">
+            <img id="videoThumbnail" src="" alt="Miniatura do vídeo" class="video-thumbnail">
+            <div class="media-preview-overlay">
+              <div class="play-indicator">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="qualities-section">
+            <div class="qualities-header">
+              <h2 class="qualities-title">Qualidades</h2>
+              <span class="qualities-subtitle">escolha uma</span>
+            </div>
+
+            <div id="qualitiesList" class="qualities-grid">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="features-section">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <h3>Grátis</h3>
+          <p>Sem cadastro e sem propaganda.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <h3>Até 1080p</h3>
+          <p>Pega a maior resolução que o post tiver.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3>Nome certo no arquivo</h3>
+          <p>O download passa pelo servidor, então o arquivo já vem como .mp4 com nome legível.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div class="legal-notice">
+        <p>Use só pra mídia sua, de domínio público ou com autorização do autor. Respeite os termos do X. Projeto sem vínculo com a X Corp.</p>
+      </div>
+      <div class="footer-bottom">
+        <p>TweetVault, 2026</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
